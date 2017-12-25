@@ -4,7 +4,7 @@ import uuid from 'uuid/v4';
 import './styles/NoteTaking.css';
 
 class NoteTaking extends Component {
-
+  
   constructor(props){
     super(props)
     this.state = {
@@ -26,10 +26,13 @@ class NoteTaking extends Component {
     }
   }
 
- /* componentDidMount() {
-    var self = this;
-    setInterval(function(){ console.log(self.state.selectedNotes); }, 1000);
-  }*/
+  componentDidMount() {
+    window.addEventListener('keyup', this.onKeyboardArrows);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.onKeyboardArrows);
+  }
 
   isHighlight = (index) => {
     let className = ''
@@ -57,6 +60,23 @@ class NoteTaking extends Component {
     })
   }
 
+  onKeyboardArrows = (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+        if (this.state.focusNote >= 1) {
+          this.setFocus(this.state.focusNote - 1);
+        }
+        break
+      case 'ArrowDown':
+        if (this.state.focusNote < this.state.noteList.length - 1) {
+          this.setFocus(this.state.focusNote + 1);
+        }
+        break
+      default:
+        break
+    }
+  }
+
   addNote = () => {
     let newNote = {
       uuid: uuid(),
@@ -71,7 +91,7 @@ class NoteTaking extends Component {
 
   selectNote = (index) => {
     let newSelection;
-    if (this.isSelected(index)){
+    if (this.isSelected(index)) {
       this.setState({ 
         selectedNotes: this.state.selectedNotes.filter(item => item !== index),
       });
@@ -103,6 +123,9 @@ class NoteTaking extends Component {
   }
 
   removeSelected = () => {
+    if (this.state.selectedNotes.length === 0) {
+      return
+    }
     let newList = this.state.noteList;
     for (let i = this.state.selectedNotes.length - 1; i >= 0; i--) {
       newList.splice(this.state.selectedNotes[i], 1)
@@ -128,6 +151,14 @@ class NoteTaking extends Component {
     });
   }
 
+  addDescription = (index, e) => {
+    let note = this.state.noteList[index];
+    note.text = e.target.value;
+    this.setState({
+      noteTitle: note
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -145,7 +176,7 @@ class NoteTaking extends Component {
 
   renderNotes = () => {
     return this.state.noteList.map((note, index) => {
-      return(
+      return (
         <div key={note.uuid}>
           <li className={`note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
             <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
@@ -159,9 +190,14 @@ class NoteTaking extends Component {
 
   renderText = (note, index) => {
     if (index === this.state.focusNote) {
-      return(
+      return (
         <div>
-          <textarea value={note.text}/>
+          <textarea 
+            className="description" 
+            placeholder={'Write a drescription here'}
+            value={note.text} 
+            onChange={(e) => this.addDescription(index, e)}
+          />
         </div>
       )
     }
