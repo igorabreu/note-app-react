@@ -16,6 +16,7 @@ class NoteTaking extends Component {
     ],
     noteTitle: '',
     selectedNotes: [],
+    focusNote: 0,
   }
 
 /*  componentDidMount() {
@@ -26,7 +27,7 @@ class NoteTaking extends Component {
   render() {
     return (
       <div className="App">
-        <input type='text' onChange={ this.onTitle } value={ this.state.noteTitle }/>
+        <input type='text' onChange={ this.onTitle } value={ this.state.noteTitle } onKeyUp={ this.onKeyUp}/>
         <button onClick={ this.addNote }>add</button>
         <button onClick={ this.removeSelected }>remove</button>
         { this.renderNotes() }
@@ -34,12 +35,37 @@ class NoteTaking extends Component {
     );
   }
 
+  renderNotes = () => {
+    return this.state.noteList.map((note, index) => {
+      return(
+        <li className={ `note ${this.isHighlight(index)}` } key={index} onClick={ () => this.setFocus(index) }>
+          <input type='checkbox' defaultChecked={ this.isSelected(index) } onClick={ () => this.selectNote(index) } />
+          <h3>{ note.title }</h3>
+        </li>
+      )
+    })
+  }
+
+  isHighlight = (index) => {
+    let className = '';
+    if (index === this.state.focusNote) {
+      className = 'highlight';
+    }
+    return className;
+  }
+
+  onKeyUp = (e) => {
+    if (e.key === 'Enter') {
+      this.addNote();
+    }
+  }
+
   onTitle = (e) => {
     this.setState({ noteTitle: e.target.value });
   }
 
-  onText = (e) => {
-
+  setFocus = (index) => {
+    this.setState({ focusNote: index });
   }
 
   addNote = () => {
@@ -51,17 +77,6 @@ class NoteTaking extends Component {
       noteList: this.state.noteList.concat(newNote),
       noteTitle: '',
     }) 
-  }
-
-  renderNotes = () => {
-    return this.state.noteList.map((note, index) => {
-      return(
-        <li key={index}>
-          <input type='checkbox' defaultChecked={ this.isSelected(index) } onClick={ () => this.selectNote(index) } />
-          <h3>{ note.title }</h3>
-        </li>
-      )
-    })
   }
 
   selectNote = (index) => {
@@ -85,6 +100,9 @@ class NoteTaking extends Component {
       newList.splice(this.state.selectedNotes[i], 1);
     }
     this.setState({ noteList: newList, selectedNotes: [] });
+    if (this.state.focusNote - 1 >= 0) {
+      this.setFocus(this.state.focusNote - 1);
+    }
   }
 
   sortArray = (array) => {
