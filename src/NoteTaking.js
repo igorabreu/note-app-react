@@ -1,75 +1,65 @@
 import React, { Component } from 'react';
+import uuid from 'uuid/v4';
+
 import './styles/NoteTaking.css';
 
 class NoteTaking extends Component {
 
-  state = {
-    noteList: [
-      {
-        title: "Custumer's address",
-        text: '',
-      },
-      {
-        title: '12/22 daily meeting',
-        text: '',
-      },
-    ],
-    noteTitle: '',
-    selectedNotes: [],
-    focusNote: 0,
+  constructor(props){
+    super(props)
+    this.state = {
+      noteList: [
+        {
+          uuid: uuid(),
+          title: "Custumer's address",
+          text: '',
+        },
+        {
+          uuid: uuid(),
+          title: '12/22 daily meeting',
+          text: '',
+        },
+      ],
+      noteTitle: '',
+      selectedNotes: [],
+      focusNote: 0,
+    }
   }
 
-/*  componentDidMount() {
+ /* componentDidMount() {
     var self = this;
     setInterval(function(){ console.log(self.state.selectedNotes); }, 1000);
   }*/
 
-  render() {
-    return (
-      <div className="App">
-        <input type='text' onChange={ this.onTitle } value={ this.state.noteTitle } onKeyUp={ this.onKeyUp}/>
-        <button onClick={ this.addNote }>add</button>
-        <button onClick={ this.removeSelected }>remove</button>
-        { this.renderNotes() }
-      </div>
-    );
-  }
-
-  renderNotes = () => {
-    return this.state.noteList.map((note, index) => {
-      return(
-        <li className={ `note ${this.isHighlight(index)}` } key={index} onClick={ () => this.setFocus(index) }>
-          <input type='checkbox' defaultChecked={ this.isSelected(index) } onClick={ () => this.selectNote(index) } />
-          <h3>{ note.title }</h3>
-        </li>
-      )
-    })
-  }
-
   isHighlight = (index) => {
-    let className = '';
+    let className = ''
     if (index === this.state.focusNote) {
-      className = 'highlight';
+      className = 'highlight'
     }
-    return className;
+    return className
   }
 
   onKeyUp = (e) => {
-    if (e.key === 'Enter') {
-      this.addNote();
+    if (e.key === 'Enter' && this.state.noteTitle !== '') {
+      this.addNote()
     }
   }
 
   onTitle = (e) => {
-    this.setState({ noteTitle: e.target.value });
+    this.setState({ 
+      noteTitle: e.target.value 
+    })
   }
 
   setFocus = (index) => {
-    this.setState({ focusNote: index });
+    this.setState({ 
+      focusNote: index 
+    })
   }
 
   addNote = () => {
     let newNote = {
+      uuid: uuid(),
       title: this.state.noteTitle,
       text: '',
     }
@@ -82,39 +72,99 @@ class NoteTaking extends Component {
   selectNote = (index) => {
     let newSelection;
     if (this.isSelected(index)){
-      this.setState({ selectedNotes: this.state.selectedNotes.filter(item => item !== index) });
-      return;
+      this.setState({ 
+        selectedNotes: this.state.selectedNotes.filter(item => item !== index),
+      });
+      return
     }
-    newSelection = this.state.selectedNotes.concat(index);
-    this.sortArray(newSelection);
-    this.setState({ selectedNotes: newSelection });
+    newSelection = this.state.selectedNotes.concat(index)
+    this.sortArray(newSelection)
+    this.setState({ 
+      selectedNotes: newSelection 
+    })
   }
 
   isSelected = (index) => {
     return this.state.selectedNotes.indexOf(index) > -1;
   }
 
+  selectAll = () => {
+    this.setState({ 
+      selectedNotes: [] 
+    });
+    let allSelected = []
+    for (var i = this.state.noteList.length - 1; i >= 0; i--) {
+      allSelected.push(i)
+    }
+    this.sortArray(allSelected)
+    this.setState({ 
+      selectedNotes: allSelected,
+    })
+  }
+
   removeSelected = () => {
     let newList = this.state.noteList;
-    for (var i = this.state.selectedNotes.length - 1; i >= 0; i--) {
-      newList.splice(this.state.selectedNotes[i], 1);
+    for (let i = this.state.selectedNotes.length - 1; i >= 0; i--) {
+      newList.splice(this.state.selectedNotes[i], 1)
     }
-    this.setState({ noteList: newList, selectedNotes: [] });
     if (this.state.focusNote - 1 >= 0) {
-      this.setFocus(this.state.focusNote - 1);
+      this.setFocus(this.state.focusNote - 1)
     }
+    this.setState({ 
+      noteList: newList, 
+      selectedNotes: [],
+    })
   }
 
   sortArray = (array) => {
     return array.sort((a, b) => {
       if (a < b) {
-        return -1;
+        return -1
       }
       if (a > b) {
-        return 1;
+        return 1
       }
-      return 0;
+      return 0
     });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <h1>Note-taking App</h1>
+        <input type='text' onChange={this.onTitle} value={this.state.noteTitle} onKeyUp={this.onKeyUp}/>
+        <button onClick={this.addNote}>add</button>
+        <div className='actions'>
+          <button onClick={this.removeSelected}>remove</button>
+          <button onClick={this.selectAll}>all</button>
+        </div>
+        { this.renderNotes() }
+      </div>
+    );
+  }
+
+  renderNotes = () => {
+    return this.state.noteList.map((note, index) => {
+      return(
+        <div key={note.uuid}>
+          <li className={`note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
+            <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
+            <h3>{note.title}</h3>
+          </li>
+          {this.renderText(note, index)}
+        </div>
+      )
+    })
+  }
+
+  renderText = (note, index) => {
+    if (index === this.state.focusNote) {
+      return(
+        <div>
+          <textarea value={note.text}/>
+        </div>
+      )
+    }
   }
 }
 
