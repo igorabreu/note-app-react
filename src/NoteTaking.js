@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import uuid from 'uuid/v4';
+import React, { Component } from 'react'
+import uuid from 'uuid/v4'
+import IconAdd from './assets/add-icon.svg'
+import IconRemove from './assets/trash-icon.svg'
 
 import './styles/NoteTaking.css';
 
 class NoteTaking extends Component {
-  
   constructor(props){
     super(props)
     this.state = {
@@ -43,7 +44,7 @@ class NoteTaking extends Component {
   }
 
   onKeyUp = (e) => {
-    if (e.key === 'Enter' && this.state.noteTitle !== '') {
+    if (e.key === 'Enter') {
       this.addNote()
     }
   }
@@ -78,6 +79,9 @@ class NoteTaking extends Component {
   }
 
   addNote = () => {
+    if( this.state.noteTitle === '' ){
+      return
+    }
     let newNote = {
       uuid: uuid(),
       title: this.state.noteTitle,
@@ -122,6 +126,11 @@ class NoteTaking extends Component {
     })
   }
 
+  isAllSelected = () => {
+    //console.log(this.state.selectedNotes.length === this.state.noteList.length)
+    return this.state.selectedNotes.length === this.state.noteList.length
+  }
+
   removeSelected = () => {
     if (this.state.selectedNotes.length === 0) {
       return
@@ -148,14 +157,14 @@ class NoteTaking extends Component {
         return 1
       }
       return 0
-    });
+    })
   }
 
   addDescription = (index, e) => {
-    let note = this.state.noteList[index];
-    note.text = e.target.value;
+    let newList = this.state.noteList
+    newList[index].text = e.target.value
     this.setState({
-      noteTitle: note
+      noteList: newList
     })
   }
 
@@ -163,44 +172,49 @@ class NoteTaking extends Component {
     return (
       <div className="App">
         <h1>Note-taking App</h1>
-        <input type='text' onChange={this.onTitle} value={this.state.noteTitle} onKeyUp={this.onKeyUp}/>
-        <button onClick={this.addNote}>add</button>
-        <div className='actions'>
-          <button onClick={this.removeSelected}>remove</button>
-          <button onClick={this.selectAll}>all</button>
+        <input type='text' onChange={this.onTitle} value={this.state.noteTitle} onKeyUp={this.onKeyUp} />
+        <img className='add-icon' src={IconAdd} onClick={this.addNote} />
+        <div className='content-wrapper'>
+          <div className='board'>
+            <div className='actions'>
+              <img src={IconRemove} onClick={this.removeSelected} />
+              <input type='checkbox' checked={this.isAllSelected()} onClick={this.selectAll} />
+              <label>all</label>
+            </div>
+            {this.renderNotes()}
+            <div className='description' >{this.renderText()}</div>
+          </div>
         </div>
-        { this.renderNotes() }
       </div>
-    );
+    )
   }
 
   renderNotes = () => {
     return this.state.noteList.map((note, index) => {
       return (
-        <div key={note.uuid}>
+        <div className='notes' key={note.uuid}>
           <li className={`note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
             <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
-            <h3>{note.title}</h3>
+            <span className='note-title'>{note.title}</span>
           </li>
-          {this.renderText(note, index)}
         </div>
       )
     })
   }
 
-  renderText = (note, index) => {
-    if (index === this.state.focusNote) {
-      return (
-        <div>
-          <textarea 
-            className="description" 
+  renderText = () => {
+    return this.state.noteList.map((note, index) => {
+      if (index === this.state.focusNote) {
+        return (
+          <textarea
+            key={note.uuid}
             placeholder={'Write a drescription here'}
             value={note.text} 
             onChange={(e) => this.addDescription(index, e)}
           />
-        </div>
-      )
-    }
+        )
+      }
+    })
   }
 }
 
