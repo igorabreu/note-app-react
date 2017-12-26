@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import uuid from 'uuid/v4'
+
 import IconAdd from './assets/add-icon.svg'
 import IconRemove from './assets/trash-icon.svg'
-
 import './styles/NoteTaking.css';
 
 class NoteTaking extends Component {
@@ -51,13 +51,13 @@ class NoteTaking extends Component {
 
   onTitle = (e) => {
     this.setState({ 
-      noteTitle: e.target.value 
+      noteTitle: e.target.value,
     })
   }
 
   setFocus = (index) => {
     this.setState({ 
-      focusNote: index 
+      focusNote: index,
     })
   }
 
@@ -104,7 +104,7 @@ class NoteTaking extends Component {
     newSelection = this.state.selectedNotes.concat(index)
     this.sortArray(newSelection)
     this.setState({ 
-      selectedNotes: newSelection 
+      selectedNotes: newSelection,
     })
   }
 
@@ -114,8 +114,11 @@ class NoteTaking extends Component {
 
   selectAll = () => {
     this.setState({ 
-      selectedNotes: [] 
+      selectedNotes: [],
     });
+    if (this.isAllSelected()) {
+      return false
+    }
     let allSelected = []
     for (var i = this.state.noteList.length - 1; i >= 0; i--) {
       allSelected.push(i)
@@ -127,7 +130,6 @@ class NoteTaking extends Component {
   }
 
   isAllSelected = () => {
-    //console.log(this.state.selectedNotes.length === this.state.noteList.length)
     return this.state.selectedNotes.length === this.state.noteList.length
   }
 
@@ -164,26 +166,28 @@ class NoteTaking extends Component {
     let newList = this.state.noteList
     newList[index].text = e.target.value
     this.setState({
-      noteList: newList
+      noteList: newList,
     })
   }
 
   render() {
     return (
       <div className="App">
-        <h1>Note-taking App</h1>
+        <h1 className='title'>Note-taking App</h1>
         <input type='text' onChange={this.onTitle} value={this.state.noteTitle} onKeyUp={this.onKeyUp} />
-        <img className='add-icon' src={IconAdd} onClick={this.addNote} />
+        <img className='add-icon' alt='add note' src={IconAdd} onClick={this.addNote} />
         <div className='content-wrapper'>
           <div className='board'>
             <div className='actions'>
-              <img src={IconRemove} onClick={this.removeSelected} />
               <input type='checkbox' checked={this.isAllSelected()} onClick={this.selectAll} />
-              <label>all</label>
+              <label>All</label>
+              <img className='remove-icon' src={IconRemove} alt='remove note' onClick={this.removeSelected} />
             </div>
-            {this.renderNotes()}
-            <div className='description' >{this.renderText()}</div>
+            <div className='notes'>
+              {this.renderNotes()}
+            </div>
           </div>
+          <div className='description'>{this.renderText()}</div>
         </div>
       </div>
     )
@@ -192,12 +196,10 @@ class NoteTaking extends Component {
   renderNotes = () => {
     return this.state.noteList.map((note, index) => {
       return (
-        <div className='notes' key={note.uuid}>
-          <li className={`note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
-            <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
-            <span className='note-title'>{note.title}</span>
-          </li>
-        </div>
+        <li key={note.uuid} className={`single-note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
+          <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
+          <span className='note-title'>{note.title}</span>
+        </li>
       )
     })
   }
@@ -214,6 +216,7 @@ class NoteTaking extends Component {
           />
         )
       }
+      return false;
     })
   }
 }
