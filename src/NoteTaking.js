@@ -174,8 +174,17 @@ class NoteTaking extends Component {
     return (
       <div className="App">
         <h1 className='title'>Note-taking App</h1>
-        <input type='text' onChange={this.onTitle} value={this.state.noteTitle} onKeyUp={this.onKeyUp} />
-        <img className='add-icon' alt='add note' src={IconAdd} onClick={this.addNote} />
+        <div className='add-note'>
+          <input 
+            className='add-title'
+            type='text'
+            placeholder='Add a new note here'
+            onChange={this.onTitle}
+            value={this.state.noteTitle}
+            onKeyUp={this.onKeyUp}
+          />
+          <img className='add-icon' alt='add note' src={IconAdd} onClick={this.addNote} />
+        </div>
         <div className='content-wrapper'>
           <div className='board'>
             <div className='actions'>

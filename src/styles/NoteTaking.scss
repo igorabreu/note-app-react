@@ -5,11 +5,18 @@
   .title {
     color: $purple;
     text-align: center;
+    margin: 20px;
   }
-  .add-icon {
-    width: 25px;
-    cursor: pointer;
-    transform: translateY(12px);
+  .add-note{
+    margin-bottom: 40px;
+    .add-title{
+      min-width: 150px;
+    }
+    .add-icon {
+      width: 25px;
+      cursor: pointer;
+      transform: translateY(12px);
+    }
   }
   .content-wrapper {
     display: flex;
@@ -30,6 +37,7 @@
         width: auto;
       }
       .actions {
+        height: 40px;
         border-bottom: 1px solid $green;
         margin: 15px;
         .remove-icon {
