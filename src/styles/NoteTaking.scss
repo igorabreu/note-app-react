@@ -11,11 +11,16 @@
     margin-bottom: 40px;
     .add-title{
       min-width: 150px;
+      text-align: center;
+      font-size: 10pt;
     }
     .add-icon {
       width: 25px;
       cursor: pointer;
       transform: translateY(12px);
+      &:hover {
+        opacity: 0.5;
+      }
     }
   }
   .content-wrapper {
@@ -23,9 +28,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    height: 75vh;
+    height: 80vh;
     @media(min-width: 768px) {
       flex-direction: row;
+      height: 75vh;
     }
     .board {
       background-color: $light-gray;
@@ -33,6 +39,7 @@
       width: 100vw;
       height: 100%;
       text-align: left;
+      padding-bottom: 45px;
       @media(min-width: 768px) {
         width: auto;
       }
@@ -44,6 +51,9 @@
           transform: translateY(1px);
           cursor: pointer;
           float: right;
+          &:hover {
+            opacity: 0.5;
+          }
         }
       } 
       .notes{
