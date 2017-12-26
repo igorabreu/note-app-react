@@ -47,6 +47,9 @@
         height: 40px;
         border-bottom: 1px solid $green;
         margin: 15px;
+        label{
+          margin-left: 5px;
+        }
         .remove-icon {
           transform: translateY(1px);
           cursor: pointer;
@@ -64,6 +67,9 @@
           &.highlight {
             color: $white;
             background: $purple;
+          }
+          .note-title{
+            margin-left: 5px;
           }
         }
       }

@@ -173,30 +173,30 @@ class NoteTaking extends Component {
   render() {
     return (
       <div className="App">
-        <h1 className='title'>Note-taking App</h1>
-        <div className='add-note'>
+        <h1 className="title">Note-taking App</h1>
+        <div className="add-note">
           <input 
-            className='add-title'
-            type='text'
-            placeholder='Add a new note here'
+            className="add-title"
+            type="text"
+            placeholder="Add a new note here"
             onChange={this.onTitle}
             value={this.state.noteTitle}
             onKeyUp={this.onKeyUp}
           />
-          <img className='add-icon' alt='add note' src={IconAdd} onClick={this.addNote} />
+          <img className="add-icon" alt="add note" src={IconAdd} onClick={this.addNote} />
         </div>
-        <div className='content-wrapper'>
-          <div className='board'>
-            <div className='actions'>
-              <input type='checkbox' checked={this.isAllSelected()} onClick={this.selectAll} />
+        <div className="content-wrapper">
+          <div className="board">
+            <div className="actions">
+              <input type="checkbox" checked={this.isAllSelected()} onClick={this.selectAll} />
               <label>All</label>
-              <img className='remove-icon' src={IconRemove} alt='remove note' onClick={this.removeSelected} />
+              <img className="remove-icon" src={IconRemove} alt="remove note" onClick={this.removeSelected} />
             </div>
-            <div className='notes'>
+            <div className="notes">
               {this.renderNotes()}
             </div>
           </div>
-          <div className='description'>{this.renderText()}</div>
+          <div className="description">{this.renderText()}</div>
         </div>
       </div>
     )
@@ -206,8 +206,8 @@ class NoteTaking extends Component {
     return this.state.noteList.map((note, index) => {
       return (
         <li key={note.uuid} className={`single-note ${this.isHighlight(index)}`} onClick={() => this.setFocus(index)}>
-          <input type='checkbox' checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
-          <span className='note-title'>{note.title}</span>
+          <input type="checkbox" checked={this.isSelected(index)} onClick={() => this.selectNote(index)} />
+          <span className="note-title">{note.title}</span>
         </li>
       )
     })
